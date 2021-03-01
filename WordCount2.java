@@ -1,7 +1,4 @@
-import java.io.IOException;
-import java.util.StringTokenizer;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -22,9 +19,9 @@ public class WordCount {
     public void map(Object key, Text value, Context context
                     ) throws IOException, InterruptedException {
             String line = value.toString();
-            StringTokenizer itr = new StringTokenizer(line, " \t\n\r\f\".,:;?![]()«»–’");
+            StringTokenizer itr = new StringTokenizer(line, " \t\n\r\f\".,:;?![]()«»–’"); // Символы исключения
       while (itr.hasMoreTokens()) {
-        word.set(itr.nextToken().toLowerCase());
+        word.set(itr.nextToken().toLowerCase()); // Нижний регистр символов 
         context.write(word, one);
       }
     }
@@ -42,7 +39,9 @@ public class WordCount {
         sum += val.get();
       }
       result.set(sum);
-      context.write(key, result);
+      if (sum > 99) { // Больше 99-ти слов
+        context.write(key, result);
+      }
     }
   }
 
